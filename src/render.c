@@ -1,45 +1,53 @@
-#include "../inc/maze.h"
+#include "../headers/header.h"
+
+static const char *textureFileNames[NUM_TEXTURES] = {
+    "./images/redbrick.png",
+    "./images/purplestone.png",
+    "./images/mossystone.png",
+    "./images/graystone.png",
+    "./images/colorstone.png",
+    "./images/bluestone.png",
+    "./images/wood.png",
+    "./images/eagle.png",
+};
 
 /**
- * draw_2d_map - creates 2d points to the screen
- * @sdl: data structure of sdl_instance
- * @map: map_t data structure representing 2D map
- * Return: nothing
+ * WallTexturesready - load textures in the respective position
+ *
  */
-void draw_2d_map(sdl_instance *sdl, map_t *map)
+void WallTexturesready(void)
 {
-    int i, j;
-    SDL_Rect block = {0, 0, GRID_SIZE, GRID_SIZE};
+    int i;
 
-    for (i = 0; i < map->rows; i++)
+    for (i = 0; i < NUM_TEXTURES; i++)
     {
-        for (j = 0; j < map->columns; j++)
+        upng_t *upng;
+
+        upng = upng_new_from_file(textureFileNames[i]);
+
+        if (upng != NULL)
         {
-            block.x = (j << 4) + MAP_MARGIN;
-            block.y = (i << 4) + MAP_MARGIN;
-            if (map->arr[i][j] == '0')
+            upng_decode(upng);
+            if (upng_get_error(upng) == UPNG_EOK)
             {
-                REND_COLOR(sdl->renderer, 255, 255, 255, 100);
-                SDL_RenderFillRect(sdl->renderer, &block);
-            }
-            else
-            {
-                REND_COLOR(sdl->renderer, 0, 0, 0, 150);
-                SDL_RenderFillRect(sdl->renderer, &block);
+                wallTextures[i].upngTexture = upng;
+                wallTextures[i].width = upng_get_width(upng);
+                wallTextures[i].height = upng_get_height(upng);
+                wallTextures[i].texture_buffer = (color_t *)upng_get_buffer(upng);
             }
         }
     }
 }
 
 /**
- * send_frame - draws the results in renderer to the screen
- * @sdl: data structure of sdl_instance
- * Return: nothing
+ * freeWallTextures - free wall textures
+ *
  */
-void send_frame(sdl_instance *sdl)
+
+void freeWallTextures(void)
 {
-    REND_COLOR_BLACK(sdl->renderer);
-    SDL_SetRenderDrawBlendMode(sdl->renderer, SDL_BLENDMODE_BLEND);
-    SDL_RenderPresent(sdl->renderer);
-    SDL_RenderClear(sdl->renderer);
+    int i;
+
+    for (i = 0; i < NUM_TEXTURES; i++)
+        upng_free(wallTextures[i].upngTexture);
 }

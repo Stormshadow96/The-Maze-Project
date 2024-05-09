@@ -1,82 +1,96 @@
-#include "../inc/maze.h"
+#include "../headers/header.h"
+
+bool GameRunning = false;
+int TicksLastFrame;
+player_t player;
 
 /**
- * close_file - closes an opened file
- * @fp: File pointer
- * Return: nothing
+ * setup_game - initialize player variables and load wall textures
+ *
  */
-void close_file(FILE *fp)
+
+void setup_game(void)
 {
-    if (fp)
-        fclose(fp);
+
+    player.x = SCREEN_WIDTH / 2;
+    player.y = SCREEN_HEIGHT / 2;
+    player.width = 1;
+    player.height = 30;
+    player.walkDirection = 0;
+    player.walkSpeed = 100;
+    player.turnDirection = 0;
+    player.turnSpeed = 45 * (PI / 180);
+    player.rotationAngle = PI / 2;
+    WallTexturesready();
 }
 
 /**
- * handle_file - calls all file handling functions
- * @filename: string pointer to file name
- * Return: map_t datastructure of map information
+ * update_game - update_game delta time, the ticks last frame
+ *          the player movement and the ray casting
+ *
  */
-map_t handle_file(char *filename)
+void update_game(void)
 {
-    FILE *fp = NULL;
-    map_t map;
+    float DeltaTime;
+    int timeToWait = FRAME_TIME_LENGTH - (SDL_GetTicks() - TicksLastFrame);
 
-    fp = open_file(filename);
-    map = read_file(fp);
-    close_file(fp);
-
-    return (map);
-}
-
-/**
- * open_file - opens a file
- * @filename: string pointer to file name
- * Return: File pointer
- */
-FILE *open_file(char *filename)
-{
-    FILE *fp = NULL;
-
-    fp = fopen(filename, "r");
-    if (!fp)
+    if (timeToWait > 0 && timeToWait <= FRAME_TIME_LENGTH)
     {
-        fprintf(stderr, "Error: Can't open file %s\n", filename);
-        exit(EXIT_FAILURE);
+        SDL_Delay(timeToWait);
     }
+    DeltaTime = (SDL_GetTicks() - TicksLastFrame) / 1000.0f;
 
-    return (fp);
+    TicksLastFrame = SDL_GetTicks();
+
+    movePlayer(DeltaTime);
+    castAllRays();
 }
 
 /**
- * read_file - reads the content of a file
- * @fp: File pointer
- * Return: map_t data structure containing map data
+ * render - calls all functions needed for on-screen rendering
+ *
  */
-map_t read_file(FILE *fp)
+
+void render_game(void)
 {
-    size_t line_count = 0;
-    char *line = NULL;
-    map_t map = {NULL, 0, 0};
-    unsigned int line_number = 0, line_length_flag = 0;
-    char *dup_line = NULL;
+    clearColorBuffer(0xFF000000);
 
-    map.rows = count_rows(fp);
-    map.arr = malloc(sizeof(char *) * map.rows);
+    renderWall();
 
-    while ((getline(&line, &line_count, fp)) != -1)
+    renderMap();
+    renderRays();
+    renderPlayer();
+
+    renderColorBuffer();
+}
+
+/**
+ * Destroy - free wall textures and destroy window
+ *
+ */
+void destroy_game(void)
+{
+    freeWallTextures();
+    destroyWindow();
+}
+
+/**
+ * main - main function
+ * Return: 0
+ */
+
+int main(void)
+{
+    GameRunning = initializeWindow();
+
+    setup_game();
+
+    while (GameRunning)
     {
-        dup_line = strtok(strdup(line), "\n");
-        if (line_length_flag == 0)
-        {
-            map.columns = strlen(dup_line);
-            line_length_flag++;
-        }
-        validate_line_data(map.columns, dup_line, fp, (line_number + 1));
-        map.arr[line_number] = dup_line;
-        line_number++;
+        handleInput();
+        update_game();
+        render_game();
     }
-    free(line);
-    fseek(fp, 0, SEEK_SET);
-
-    return (map);
+    destroy_game();
+    return (0);
 }
