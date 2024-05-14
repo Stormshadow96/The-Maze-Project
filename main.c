@@ -1,10 +1,12 @@
-/*This source code copyrighted by Lazy Foo' Productions (2004-2022)
+/**This source code copyrighted by Lazy Foo' Productions (2004-2022)
 and may not be redistributed without written permission.*/
 
 // Using SDL and standard IO
 #include <SDL.h>
 #include <stdio.h>
 #include <stdbool.h>
+#include <SDL2/SDL_video.h>
+#include <SDL2/SDL.h>
 
 // Screen dimension constants
 const int SCREEN_WIDTH = 640;

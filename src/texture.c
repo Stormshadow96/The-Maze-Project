@@ -1,4 +1,5 @@
 #include "../headers/header.h"
+#include "shared_functions.h"
 
 static const char *textureFileNames[NUM_TEXTURES] = {
 	"./images/redbrick.png",
