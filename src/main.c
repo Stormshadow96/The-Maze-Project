@@ -1,4 +1,5 @@
 #include "../headers/header.h"
+#include "../headers/texture.h"
 
 bool GameRunning = false;
 int TicksLastFrame;
