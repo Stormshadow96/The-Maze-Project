@@ -56,6 +56,7 @@ void SDL_KEYUP_FUNC(SDL_Event event)
  * handleInput - process input from the keyboard
  *
  */
+
 void handleInput(void)
 {
     SDL_Event event;

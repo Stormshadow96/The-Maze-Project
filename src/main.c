@@ -1,7 +1,7 @@
 #include "../headers/header.h"
 
 bool GameRunning = false;
-int TicksLastFrame;
+int TicksLastFrame = 0;
 player_t player;
 
 /**
@@ -10,11 +10,12 @@ player_t player;
  */
 
 void setup_game(void)
+
 {
 
     player.x = SCREEN_WIDTH / 2;
     player.y = SCREEN_HEIGHT / 2;
-    player.width = 1;
+    player.width = 10;
     player.height = 30;
     player.walkDirection = 0;
     player.walkSpeed = 100;
@@ -29,7 +30,9 @@ void setup_game(void)
  *          the player movement and the ray casting
  *
  */
+
 void update_game(void)
+
 {
     float DeltaTime;
     int timeToWait = FRAME_TIME_LENGTH - (SDL_GetTicks() - TicksLastFrame);
@@ -52,6 +55,7 @@ void update_game(void)
  */
 
 void render_game(void)
+
 {
     clearColorBuffer(0xFF000000);
 
@@ -68,7 +72,9 @@ void render_game(void)
  * Destroy - free wall textures and destroy window
  *
  */
+
 void destroy_game(void)
+
 {
     freeWallTextures();
     destroyWindow();
