@@ -1,9 +1,11 @@
 #ifndef HEADER_H
 #define HEADER_H
 
+/* standard library */
 #include <SDL2/SDL.h>
 #include <stdint.h>
 #include <math.h>
+#include <float.h>
 #include <limits.h>
 #include <stdio.h>
 #include <stdbool.h>
@@ -96,6 +98,7 @@ void renderPlayer(void);
 /**
  * struct ray_s - struct for the textures
  * @rayAngle: ray angle
+ *
  * @wallHitX: wall hit x coordinate
  * @wallHitY: wall hit x coordinate
  * @distance: ditance to the wall
@@ -154,4 +157,4 @@ void freeWallTextures(void);
 
 void renderWall(void);
 
-#endif /*HEADER_H*/
+#endif
